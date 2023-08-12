@@ -3,7 +3,14 @@
 }
 
 .display_text_current {
-  color: white;
-  background: #00000055;
-  border-radius: 2px;
+  /* color: white; */
+  /* background: #00000055; */
+  /* border-radius: 2px; */
+  text-decoration: underline;
+}
+.correct {
+  color: blue;
+}
+.wrong-char {
+  color: gray;
 }

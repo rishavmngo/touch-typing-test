@@ -23,15 +23,31 @@ const updateRemainingWords = () => {
   }
   displayTextRemaining.innerText = finalText
 }
-updateRemainingWords()
 
 const updateCurrentWord = (space) => {
   displayTextCurrent.innerText =
     inputArray[currentWordIndex] + `${space ? ' ' : ''}`
 }
 
-updateCurrentWord(true)
+const updateCompletedWords = (CompletedWords) => {
+  displayTextCompleted.innerText = CompletedWords
+}
 
+updateRemainingWords()
+// updateCurrentWord(true)
+
+const updateCursorPos = (currentWord, input = '') => {
+  displayTextCurrent.innerHTML = ''
+  for (let i = 0; i < currentWord.length; i++) {
+    if (i < input.length)
+      displayTextCurrent.innerHTML += `<span class="correct">${currentWord[i]}</span>`
+    else
+      displayTextCurrent.innerHTML += `<span class="wrong-char">${currentWord[i]}</span>`
+  }
+  displayTextCurrent.innerHTML += `<span class="correct"> </span>`
+}
+
+updateCursorPos(inputArray[currentWordIndex])
 function matchWithInput(currentWord, inputValue) {
   if (
     !WRONG &&
@@ -42,10 +58,13 @@ function matchWithInput(currentWord, inputValue) {
     CompletedWords += inputArray[currentWordIndex] + ' '
     updateCompletedWords(CompletedWords)
     currentWordIndex++
-    updateCurrentWord(true)
+    // updateCurrentWord(true)
+    updateCursorPos(inputArray[currentWordIndex])
     updateRemainingWords()
     return
   }
+
+  updateCursorPos(currentWord, inputValue)
   for (let i = 0; i < inputValue.length; i++) {
     if (inputValue[i] == currentWord[i]) {
       WRONG = false
@@ -55,6 +74,7 @@ function matchWithInput(currentWord, inputValue) {
     }
   }
 
+  // updateCursorPos()
   if (
     !WRONG &&
     currentWord.length == inputValue.length &&
@@ -71,22 +91,21 @@ function matchWithInput(currentWord, inputValue) {
   }
 }
 
-const updateCompletedWords = (CompletedWords) => {
-  displayTextCompleted.innerText = CompletedWords
-}
 inputField.addEventListener('input', (e) => {
   const currentWord = inputArray[currentWordIndex]
   const inputValue = e.target.value
-  const appendSpace = true
   if (currentWordIndex < inputArray.length) {
-    updateCurrentWord(appendSpace)
+    // updateCurrentWord(true)
     matchWithInput(currentWord, inputValue)
-    if (WRONG) {
+    if (WRONG && inputValue.length) {
       displayFlag.innerText = 'Wrong'
       inputField.style.backgroundColor = '#cf8a8a'
-    } else if (!WRONG && displayFlag.innerText == 'Wrong') {
+    } else if (
+      (!WRONG && displayFlag.innerText == 'Wrong') ||
+      inputValue.length == 0
+    ) {
       displayFlag.innerText = ''
-      inputField.style.backgroundColor = ''
+      inputField.style.backgroundColor = 'white'
     }
   }
 })
