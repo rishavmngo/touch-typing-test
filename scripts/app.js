@@ -41,32 +41,34 @@ updateRemainingWords()
 
 const updateCursorPos = (currentWord, input = '') => {
   displayTextCurrent.innerHTML = ''
+  // displayTextCurrent.innerHTML = '<div class="cursor"></div>'
+  const cursor = document.querySelector('.cursor')
 
   let inputLength = input.length == 0 ? -1 : input.length
   for (let i = 0; i < currentWord.length; i++) {
     if (i < input.length && currentWord[i] == input[i]) {
       displayTextCurrent.innerHTML += `<span class="correct com">${currentWord[i]}</span>`
     } else if (i >= input.length) {
-      displayTextCurrent.innerHTML += `<span >${currentWord[i]}</span>`
+      displayTextCurrent.innerHTML += `<span class="com">${currentWord[i]}</span>`
     } else
       displayTextCurrent.innerHTML += `<span class="wrong-char com">${currentWord[i]}</span>`
 
     if (input.length > 0 && i == input.length - 1) {
-      const lastEnterds = document.querySelectorAll('.com')
-      const lastEnterd = lastEnterds[lastEnterds.length - 1]
-      const cursor = document.createElement('div')
-      cursor.classList.add('cursor')
-      lastEnterd.after(cursor)
-      cursor.style.top = lastEnterd.offsetTop + 'px'
-      cursor.style.left = lastEnterd.offsetLeft + lastEnterd.offsetWidth + 'px'
+      const lastEnterd = displayTextCurrent.lastChild
+      // lastEnterd.style.marginLeft = '0px'
+      lastEnterd.style.borderRight = '1px solid red'
+      // lastEnterd.classList.add('c')
     }
     if (input.length == 0 && i == 0) {
       const children = displayTextCurrent.children[0]
-      const cursor = document.createElement('div')
-      cursor.classList.add('cursor')
-      children.before(cursor)
-      cursor.style.top = children.offsetTop + 'px'
-      cursor.style.left = children.offsetLeft + 'px'
+
+      // children.classList.add('c')
+      children.style.borderLeft = '1px solid red'
+      // const cursor = document.createElement('div')
+      // cursor.classList.add('cursor')
+      // children.before(cursor)
+      // cursor.style.top = children.offsetTop + 'px'
+      // cursor.style.left = children.offsetLeft + 'px'
     }
   }
   displayTextCurrent.innerHTML += `<span class="correct"> </span>`
