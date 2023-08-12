@@ -9,8 +9,15 @@
   text-decoration: underline;
 }
 .correct {
-  color: blue;
+  color: lime;
 }
 .wrong-char {
-  color: gray;
+  color: red;
+}
+.cursor {
+  position: absolute;
+  width: 1px;
+  height: 16px;
+  background: black;
+  opacity: 0.7;
 }

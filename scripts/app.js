@@ -4,7 +4,8 @@ const displayFlag = document.querySelector('.display_flag')
 const displayTextCompleted = document.querySelector('.display_text_completed')
 const displayTextCurrent = document.querySelector('.display_text_current')
 const displayTextRemaining = document.querySelector('.display_text_remaining')
-const inputText = 'this is a cow.'.trim()
+const inputText = 'this is a cow. and this is great'.trim()
+const cursor = document.querySelector('.cursor')
 
 //initial state
 let CompletedWords = ''
@@ -38,11 +39,24 @@ updateRemainingWords()
 
 const updateCursorPos = (currentWord, input = '') => {
   displayTextCurrent.innerHTML = ''
+  let inputLength = input.length == 0 ? -1 : input.length
   for (let i = 0; i < currentWord.length; i++) {
-    if (i < input.length)
+    if (i < input.length && currentWord[i] == input[i])
       displayTextCurrent.innerHTML += `<span class="correct">${currentWord[i]}</span>`
-    else
+    else if (i >= input.length) {
+      displayTextCurrent.innerHTML += `<span >${currentWord[i]}</span>`
+    } else
       displayTextCurrent.innerHTML += `<span class="wrong-char">${currentWord[i]}</span>`
+
+    if (input.length > 0 && currentWord[i] == currentWord[input.length - 1]) {
+      const rect = displayTextCurrent.lastChild.getBoundingClientRect()
+      cursor.style.top = rect.top
+      cursor.style.left = rect.right + 'px'
+    }
+    if (input.length == 0) {
+      const rect = displayTextCurrent.getBoundingClientRect()
+      cursor.style.left = rect.left + 'px'
+    }
   }
   displayTextCurrent.innerHTML += `<span class="correct"> </span>`
 }
