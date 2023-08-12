@@ -1,0 +1,9 @@
+.display_text_completed {
+  color: lime;
+}
+
+.display_text_current {
+  color: white;
+  background: #00000055;
+  border-radius: 2px;
+}
