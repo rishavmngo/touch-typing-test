@@ -1,3 +1,7 @@
+.display_text {
+  width: 500px;
+  overflow-x: auto;
+}
 .display_text_completed {
   color: lime;
 }
@@ -7,6 +11,7 @@
   /* background: #00000055; */
   /* border-radius: 2px; */
   text-decoration: underline;
+  /* position: relative; */
 }
 .correct {
   color: lime;

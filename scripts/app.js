@@ -1,11 +1,13 @@
 //constants
+import texts from './texts.js'
 const inputField = document.querySelector('.input_field')
 const displayFlag = document.querySelector('.display_flag')
 const displayTextCompleted = document.querySelector('.display_text_completed')
 const displayTextCurrent = document.querySelector('.display_text_current')
 const displayTextRemaining = document.querySelector('.display_text_remaining')
-const inputText = 'this is a cow. and this is great'.trim()
-const cursor = document.querySelector('.cursor')
+const random = Math.floor(Math.random() * texts.length)
+const inputText = texts[random].trim()
+// const cursor = document.querySelector('.cursor')
 
 //initial state
 let CompletedWords = ''
@@ -39,23 +41,32 @@ updateRemainingWords()
 
 const updateCursorPos = (currentWord, input = '') => {
   displayTextCurrent.innerHTML = ''
+
   let inputLength = input.length == 0 ? -1 : input.length
   for (let i = 0; i < currentWord.length; i++) {
-    if (i < input.length && currentWord[i] == input[i])
-      displayTextCurrent.innerHTML += `<span class="correct">${currentWord[i]}</span>`
-    else if (i >= input.length) {
+    if (i < input.length && currentWord[i] == input[i]) {
+      displayTextCurrent.innerHTML += `<span class="correct com">${currentWord[i]}</span>`
+    } else if (i >= input.length) {
       displayTextCurrent.innerHTML += `<span >${currentWord[i]}</span>`
     } else
-      displayTextCurrent.innerHTML += `<span class="wrong-char">${currentWord[i]}</span>`
+      displayTextCurrent.innerHTML += `<span class="wrong-char com">${currentWord[i]}</span>`
 
-    if (input.length > 0 && currentWord[i] == currentWord[input.length - 1]) {
-      const rect = displayTextCurrent.lastChild.getBoundingClientRect()
-      cursor.style.top = rect.top
-      cursor.style.left = rect.right + 'px'
+    if (input.length > 0 && i == input.length - 1) {
+      const lastEnterds = document.querySelectorAll('.com')
+      const lastEnterd = lastEnterds[lastEnterds.length - 1]
+      const cursor = document.createElement('div')
+      cursor.classList.add('cursor')
+      lastEnterd.after(cursor)
+      cursor.style.top = lastEnterd.offsetTop + 'px'
+      cursor.style.left = lastEnterd.offsetLeft + lastEnterd.offsetWidth + 'px'
     }
-    if (input.length == 0) {
-      const rect = displayTextCurrent.getBoundingClientRect()
-      cursor.style.left = rect.left + 'px'
+    if (input.length == 0 && i == 0) {
+      const children = displayTextCurrent.children[0]
+      const cursor = document.createElement('div')
+      cursor.classList.add('cursor')
+      children.before(cursor)
+      cursor.style.top = children.offsetTop + 'px'
+      cursor.style.left = children.offsetLeft + 'px'
     }
   }
   displayTextCurrent.innerHTML += `<span class="correct"> </span>`
@@ -102,6 +113,7 @@ function matchWithInput(currentWord, inputValue) {
     currentWordIndex++
     displayTextCurrent.innerText = ''
     displayTextRemaining.innerText = ''
+    // cursor.style.display = 'none'
   }
 }
 
