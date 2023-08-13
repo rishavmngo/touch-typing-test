@@ -1,18 +1,37 @@
 //constants
 import texts from './texts.js'
+import { Timer } from './timer.js'
 const inputField = document.querySelector('.input_field')
 const displayFlag = document.querySelector('.display_flag')
 const displayTextCompleted = document.querySelector('.display_text_completed')
 const displayTextCurrent = document.querySelector('.display_text_current')
 const displayTextRemaining = document.querySelector('.display_text_remaining')
+const displayTotalWord = document.querySelector('.totalWord')
+const displayWrongWord = document.querySelector('.wrongTyped')
+const displayTotalTyped = document.querySelector('.totalTyped')
+const displayResultAccuracy = document.querySelector('.result-accuracy')
+const displayResultSpeed = document.querySelector('.result-speed')
 const random = Math.floor(Math.random() * texts.length)
 const inputText = texts[random].trim()
+let STARTED = false
+const textRecord = {
+  totalCharacter: 0,
+  totalTypedCharacters: 0,
+  totalTypedWrongCharacters: 0,
+}
 // const cursor = document.querySelector('.cursor')
+
+const timer = new Timer()
 
 //initial state
 let CompletedWords = ''
 const inputArray = inputText.split(' ')
 
+inputArray.forEach((ch) => {
+  textRecord.totalCharacter += ch.length
+})
+
+textRecord.totalCharacter += inputArray.length - 1
 let currentWordIndex = 0
 let currentChar = 0
 
@@ -27,6 +46,27 @@ const updateRemainingWords = () => {
   displayTextRemaining.innerText = finalText
 }
 
+const updateTextRecord = () => {
+  displayTotalWord.innerText = textRecord.totalCharacter
+  displayTotalTyped.innerText = textRecord.totalTypedCharacters
+  displayWrongWord.innerText = textRecord.totalTypedWrongCharacters
+}
+updateTextRecord()
+
+const calculateWpm = () => {
+  const wpm =
+    (textRecord.totalTypedCharacters / 5 -
+      textRecord.totalTypedWrongCharacters) /
+    timer.result()
+  return wpm.toFixed(2) + ' WPM'
+}
+const displayResult = () => {
+  const accuracy =
+    (textRecord.totalTypedCharacters - textRecord.totalTypedWrongCharacters) *
+    (100 / textRecord.totalCharacter)
+  displayResultAccuracy.innerText = accuracy.toFixed(1) + ' %'
+  displayResultSpeed.innerText = calculateWpm()
+}
 const updateCurrentWord = (space) => {
   displayTextCurrent.innerText =
     inputArray[currentWordIndex] + `${space ? ' ' : ''}`
@@ -62,13 +102,7 @@ const updateCursorPos = (currentWord, input = '') => {
     if (input.length == 0 && i == 0) {
       const children = displayTextCurrent.children[0]
 
-      // children.classList.add('c')
       children.style.borderLeft = '1px solid red'
-      // const cursor = document.createElement('div')
-      // cursor.classList.add('cursor')
-      // children.before(cursor)
-      // cursor.style.top = children.offsetTop + 'px'
-      // cursor.style.left = children.offsetLeft + 'px'
     }
   }
   displayTextCurrent.innerHTML += `<span class="correct"> </span>`
@@ -85,7 +119,6 @@ function matchWithInput(currentWord, inputValue) {
     CompletedWords += inputArray[currentWordIndex] + ' '
     updateCompletedWords(CompletedWords)
     currentWordIndex++
-    // updateCurrentWord(true)
     updateCursorPos(inputArray[currentWordIndex])
     updateRemainingWords()
     return
@@ -107,8 +140,12 @@ function matchWithInput(currentWord, inputValue) {
     currentWord.length == inputValue.length &&
     currentWordIndex == inputArray.length - 1
   ) {
+    timer.stop()
+    STARTED = false
     inputField.value = ''
     displayFlag.innerText = 'Finished'
+
+    displayResult()
     inputField.disabled = true
     CompletedWords += inputArray[currentWordIndex]
     updateCompletedWords(CompletedWords)
@@ -120,10 +157,19 @@ function matchWithInput(currentWord, inputValue) {
 }
 
 inputField.addEventListener('input', (e) => {
+  if (!STARTED) {
+    console.log('started')
+    timer.start()
+    STARTED = true
+  }
   const currentWord = inputArray[currentWordIndex]
   const inputValue = e.target.value
+
+  if (!!e.data) {
+    textRecord.totalTypedCharacters++
+  }
+
   if (currentWordIndex < inputArray.length) {
-    // updateCurrentWord(true)
     matchWithInput(currentWord, inputValue)
     if (WRONG && inputValue.length) {
       displayFlag.innerText = 'Wrong'
@@ -135,5 +181,10 @@ inputField.addEventListener('input', (e) => {
       displayFlag.innerText = ''
       inputField.style.backgroundColor = 'white'
     }
+
+    if (WRONG) {
+      textRecord.totalTypedWrongCharacters++
+    }
   }
+  updateTextRecord(textRecord)
 })
